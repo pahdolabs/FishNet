@@ -1,4 +1,4 @@
-﻿using FishNet.Connection;
+﻿﻿using FishNet.Connection;
 using FishNet.Documenting;
 using FishNet.Managing.Transporting;
 using FishNet.Object;
@@ -184,13 +184,13 @@ namespace FishNet.Managing.Timing
         /// <summary>
         /// How long the local server has been connected.
         /// </summary>
-        public float ServerUptime { get; private set; }
+        public float ServerUptime { get; set; } // PAHDOLAB EDIT @NICO
         /// <summary>
         /// How long the local client has been connected.
         /// </summary>
-        public float ClientUptime { get; private set; }
+        public float ClientUptime { get; set; } // PAHDOLAB EDIT @NICO
         #endregion
-
+         
         #region Serialized.
         /// <summary>
         /// When to invoke OnUpdate and other Unity callbacks relayed by the TimeManager.
@@ -343,7 +343,7 @@ namespace FishNet.Managing.Timing
         /// <summary>
         /// Called when FixedUpdate ticks. This is called before any other script.
         /// </summary>
-        internal void TickFixedUpdate()
+        public void TickFixedUpdate()  // PAHDOLAB EDIT @NICO
         {
             OnFixedUpdate?.Invoke();
             /* Invoke onsimulation if using Unity time.
@@ -366,7 +366,7 @@ namespace FishNet.Managing.Timing
         /// <summary>
         /// Called when Update ticks. This is called before any other script.
         /// </summary>
-        internal void TickUpdate()
+        public void TickUpdate() // PAHDOLAB EDIT @NICO
         {
             if (NetworkManager.IsServerStarted)
                 ServerUptime += Time.deltaTime;
@@ -401,7 +401,7 @@ namespace FishNet.Managing.Timing
         /// <summary>
         /// Called when LateUpdate ticks. This is called after all other scripts.
         /// </summary>
-        internal void TickLateUpdate()
+        public void TickLateUpdate() // PAHDOLAB EDIT @NICO
         {
             OnLateUpdate?.Invoke();
         }
@@ -418,7 +418,7 @@ namespace FishNet.Managing.Timing
             NetworkManager.ServerManager.OnServerConnectionState += ServerManager_OnServerConnectionState;
             NetworkManager.ClientManager.OnClientConnectionState += ClientManager_OnClientConnectionState;
 
-            AddNetworkLoops();
+            //AddNetworkLoops(); // PAHDOLAB EDIT @NICO
         }
 
         /// <summary>
@@ -675,12 +675,6 @@ namespace FishNet.Managing.Timing
                 Debug.LogWarning($"Simulation delta cannot be 0. Network timing will not continue.");
                 return;
             }
-            ////If client needs to slow down then increase delta very slightly.
-            //if (!isServer && NetworkManager.PredictionManager.ReduceClientTiming)
-            //{
-            //    Debug.LogWarning($"Slowing down.");
-            //    timePerSimulation *= 1.05f;
-            //}
 
             double time = Time.unscaledDeltaTime;
 
@@ -723,7 +717,7 @@ namespace FishNet.Managing.Timing
                     //Tell predicted objecs to reconcile before OnTick.
                     NetworkManager.PredictionManager.ReconcileToStates();
 #endif
-                    OnTick?.Invoke();
+                    OnTick?.Invoke(); 
 
                     if (PhysicsMode == PhysicsMode.TimeManager)
                     {
@@ -1075,19 +1069,6 @@ namespace FishNet.Managing.Timing
 
         #region Timing adjusting.    
         /// <summary>
-        /// Changes the adjustedTickDelta, increasing or decreasing it.
-        /// </summary>
-        /// <param name="additionalMultiplier">Amount to multiply expected change by. This can be used to make larger or smaller changes.</param>
-        internal void ChangeAdjustedTickDelta(bool speedUp, double additionalMultiplier = 1d)
-        {
-            double share = (TickDelta * 0.01d) * additionalMultiplier;
-            if (speedUp)
-                _adjustedTickDelta -= share;
-            else
-                _adjustedTickDelta += share;
-        }
-
-        /// <summary>
         /// Sends a TimingUpdate packet to clients.
         /// </summary>
         private void SendTimingAdjustment()
@@ -1136,25 +1117,25 @@ namespace FishNet.Managing.Timing
 
             TryRecalculateTick();
 
-            ////Do not change timing if client is slowing down due to latency issues.
-            //if (Time.unscaledTime - NetworkManager.PredictionManager.SlowDownTime > 3f)
-            //{
-                //Pefect!
-                if (tickDifference == 0) { }
-                //Difference is extreme, reset to default timings. Client probably had an issue.
-                else if (Mathf.Abs(tickDifference) > maximumDifference)
-                {
-                    _adjustedTickDelta = TickDelta;
-                }
-                //Otherwise adjust the delta marginally.
-                else
-                {
-                    /* A negative tickDifference indicates the client is
-                     * moving too fast, while positive indicates too slow. */
-                    bool speedUp = (tickDifference > 0);
-                    ChangeAdjustedTickDelta(speedUp);
-                }
-          //  }
+            //Pefect!
+            if (tickDifference == 0)
+            { }
+            //Difference is extreme, reset to default timings. Client probably had an issue.
+            else if (Mathf.Abs(tickDifference) > maximumDifference)
+            {
+                _adjustedTickDelta = TickDelta;
+            }
+            //Otherwise adjust the delta marginally.
+            else
+            {
+                //Apply 1% of TickDelta as an adjustment.
+                double share = (TickDelta * 0.01d);
+                long tdSign = MathF.Sign(tickDifference);
+                //Only adjust by 1 tick per update.
+                double adjustment = (share * tdSign);
+                _adjustedTickDelta -= adjustment;
+            }
+
             //Recalculates Tick value if it exceeds maximum difference.
             void TryRecalculateTick()
             {
