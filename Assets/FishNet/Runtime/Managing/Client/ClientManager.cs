@@ -406,8 +406,7 @@ namespace FishNet.Managing.Client
                 else
                     reader.Initialize(fullMessage, NetworkManager, dataSource);
 
-                NetworkBehaviour nb = reader.ReadNetworkBehaviour();
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, -1, PacketId.Split, expectedMessages*1500));
+                OnPacketRead?.Invoke(new PacketProcessingArgs(reader.ReadNetworkBehaviour(), -1, PacketId.Split, expectedMessages*1500));
             }
             //Not split.
             else
