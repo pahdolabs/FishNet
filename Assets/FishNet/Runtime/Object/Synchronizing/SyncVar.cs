@@ -104,6 +104,11 @@ namespace FishNet.Object.Synchronizing
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetValue(T nextValue, bool calledByUser)
         {
+            // FishNet normally defers this until later, but it is usually very cheap compared to the initalization
+            // checks that FishNet does, so moving it here!
+            if (calledByUser && Comparers.EqualityCompare<T>(_value, nextValue))
+                return;
+
             /* If not registered then that means Awake
              * has not completed on the owning class. This would be true
              * when setting values within awake on the owning class. Registered
@@ -150,20 +155,12 @@ namespace FishNet.Object.Synchronizing
                  * will occur after spawn. */
                 if (!isNetworkInitialized)
                 {
-                    //Value did not change.
-                    if (Comparers.EqualityCompare<T>(_value, nextValue))
-                        return;
-
                     _value = nextValue;
                     InvokeOnChange(prev, _value, true);
                     InvokeOnChange(prev, _value, false);
                 }
                 else
                 {
-                    //Value did not change.
-                    if (Comparers.EqualityCompare<T>(_value, nextValue))
-                        return;
-
                     _value = nextValue;
                     InvokeOnChange(prev, _value, asServerInvoke);
                 }
