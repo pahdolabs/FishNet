@@ -30,10 +30,13 @@ namespace FishNet.Utility.Performance.Profiling
             _length = args.DataLength;
             _count = 1;
             _packetId = (int)args.PacketId;
-            _objectName = args.NetworkBehaviour.name;
-            // var obj = provider.GetNetworkIdentity(id);
-            // _objectName = obj != null ? obj.name : null;
-            _rpcName = PacketInfoProvider.GetPropertyName(args.NetworkBehaviour, args.PropertyHash, args.PacketId);
+            if (args.NetworkBehaviour != null)
+            {
+                _objectName = args.NetworkBehaviour.name;
+                // var obj = provider.GetNetworkIdentity(id);
+                // _objectName = obj != null ? obj.name : null;
+                _rpcName = PacketInfoProvider.GetPropertyName(args.NetworkBehaviour, args.PropertyHash, args.PacketId);
+            }
         }
     }
 }
