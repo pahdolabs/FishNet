@@ -104,7 +104,7 @@ namespace FishNet.Managing.Client
         [SerializeField]
         private bool _changeFrameRate = true;
         /// <summary>
-        ///
+        /// 
         /// </summary>
         [Tooltip("Maximum frame rate the client may run at. When as host this value runs at whichever is higher between client and server.")]
         [Range(1, NetworkManager.MAXIMUM_FRAMERATE)]
@@ -405,9 +405,7 @@ namespace FishNet.Managing.Client
                     reader.Initialize(NetworkManager.TransportManager.ProcessIntermediateIncoming(fullMessage, true), NetworkManager, dataSource);
                 else
                     reader.Initialize(fullMessage, NetworkManager, dataSource);
-
-                NetworkBehaviour nb = reader.ReadNetworkBehaviour();
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, -1, PacketId.Split, expectedMessages*1500));
+                OnPacketRead?.Invoke(new PacketProcessingArgs(null, -1, PacketId.Split, expectedMessages*1500));
             }
             //Not split.
             else
