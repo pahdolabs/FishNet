@@ -339,7 +339,7 @@ namespace FishNet.Object
                 writer = CreateRpc(hash, methodWriter, PacketId.TargetRpc, channel);
 
             _networkObjectCache.NetworkManager.TransportManager.SendToClient((byte)channel, writer.GetArraySegment(), target, true, orderType);
-            writer.Store();
+            writer.StoreLength();
         }
 
         /// <summary>
@@ -404,6 +404,7 @@ namespace FishNet.Object
                 writer.WriteUInt16((byte)hash);
         }
     }
+
 
 
 }
