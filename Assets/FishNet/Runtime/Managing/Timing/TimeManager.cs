@@ -1008,6 +1008,7 @@ namespace FishNet.Managing.Timing
         {
             if (incoming)
             {
+                UnityEngine.Profiling.Profiler.BeginSample("Fishnet Iterate Incoming");
                 /* It's not possible for data to come in
                  * more than once per frame but there could
                  * be new data going out each tick, since
@@ -1022,11 +1023,14 @@ namespace FishNet.Managing.Timing
 
                 _networkManager.TransportManager.IterateIncoming(true);
                 _networkManager.TransportManager.IterateIncoming(false);
+                UnityEngine.Profiling.Profiler.EndSample();
             }
             else
             {
+                UnityEngine.Profiling.Profiler.BeginSample("Fishnet Iterate Outgoing");
                 _networkManager.TransportManager.IterateOutgoing(true);
                 _networkManager.TransportManager.IterateOutgoing(false);
+                UnityEngine.Profiling.Profiler.EndSample();
             }
         }
 
