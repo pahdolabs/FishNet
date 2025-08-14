@@ -1020,13 +1020,17 @@ namespace FishNet.Managing.Timing
                     return;
                 _lastIncomingIterationFrame = frameCount;
 
+                UnityEngine.Profiling.Profiler.BeginSample("Fishnet Iterate Incoming");
                 _networkManager.TransportManager.IterateIncoming(true);
                 _networkManager.TransportManager.IterateIncoming(false);
+                UnityEngine.Profiling.Profiler.EndSample();
             }
             else
             {
+                UnityEngine.Profiling.Profiler.BeginSample("Fishnet Iterate Outgoing");
                 _networkManager.TransportManager.IterateOutgoing(true);
                 _networkManager.TransportManager.IterateOutgoing(false);
+                UnityEngine.Profiling.Profiler.EndSample();
             }
         }
 
