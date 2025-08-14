@@ -1159,6 +1159,7 @@ namespace FishNet.CodeGenerating.Processing
             if (methodDef.Name == NetworkBehaviourProcessor.NETWORKINITIALIZE_EARLY_INTERNAL_NAME)
                 return false;
 
+            methodDef.Body.SimplifyMacros();
 
             bool modified = false;
 
@@ -1195,6 +1196,8 @@ namespace FishNet.CodeGenerating.Processing
                 }
 
             }
+
+            methodDef.Body.Optimize();
 
             return modified;
         }
