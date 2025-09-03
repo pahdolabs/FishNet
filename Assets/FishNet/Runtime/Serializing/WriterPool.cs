@@ -2,7 +2,6 @@ using FishNet.Managing;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using UnityEngine;
 
 namespace FishNet.Serializing
 {
@@ -236,5 +235,6 @@ namespace FishNet.Serializing
 
     }
 }
+
 
 
