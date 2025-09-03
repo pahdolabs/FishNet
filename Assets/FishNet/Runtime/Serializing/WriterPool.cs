@@ -112,7 +112,7 @@ namespace FishNet.Serializing
             //There is already one pooled.
             if (_lengthPool.TryGetValue(index, out stack) && stack.Count > 0)
             {
-                Debug.Log($"Pooled - Checked WriterPool at index: {index} for length: {length}, count: {stack.Count}");
+                Debug.Log($"Pooled - Checked WriterPool at index: {index} for length: {length}, count: {stack.Count}, _lengthPool.Count: {_lengthPool.Count}, _lengthPool.Keys: [{string.Join(',',_lengthPool.Keys)}]");
                 PooledWriter result = stack.Pop();
                 result.Reset(networkManager);
                 return result;
@@ -120,7 +120,7 @@ namespace FishNet.Serializing
             //Not pooled yet.
             else
             {
-                Debug.Log($"NotPooled - Checked WriterPool at index: {index} for length: {length}, count: {stack?.Count ?? -1}");
+                Debug.Log($"NotPooled - Checked WriterPool at index: {index} for length: {length}, count: {stack?.Count ?? -1}, _lengthPool.Count: {_lengthPool.Count}, _lengthPool.Keys: [{string.Join(',',_lengthPool.Keys)}]");
                 //Get any ol' writer.
                 PooledWriter writer = Retrieve(networkManager);
                 /* Ensure length to fill it's bracket.
@@ -238,3 +238,4 @@ namespace FishNet.Serializing
 
     }
 }
+
