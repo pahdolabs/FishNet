@@ -2,6 +2,7 @@ using FishNet.Managing;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace FishNet.Serializing
 {
@@ -111,6 +112,7 @@ namespace FishNet.Serializing
             //There is already one pooled.
             if (_lengthPool.TryGetValue(index, out stack) && stack.Count > 0)
             {
+                Debug.Log($"Pooled - Checked WriterPool at index: {index} for length: {length}, count: {stack.Count}");
                 PooledWriter result = stack.Pop();
                 result.Reset(networkManager);
                 return result;
@@ -118,6 +120,7 @@ namespace FishNet.Serializing
             //Not pooled yet.
             else
             {
+                Debug.Log($"NotPooled - Checked WriterPool at index: {index} for length: {length}, count: {stack?.Count ?? -1}");
                 //Get any ol' writer.
                 PooledWriter writer = Retrieve(networkManager);
                 /* Ensure length to fill it's bracket.
