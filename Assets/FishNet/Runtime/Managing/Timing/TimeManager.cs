@@ -168,18 +168,6 @@ namespace FishNet.Managing.Timing
         [Range(1, 25)]
         [SerializeField]
         private byte _maximumFrameTicks = 2;
-
-        public byte MaximumFrameTicks
-        {
-            get
-            {
-                return _maximumFrameTicks;
-            }
-            set
-            {
-                _maximumFrameTicks = value;
-            }
-        }
         /// <summary>
         /// 
         /// </summary>
@@ -1237,5 +1225,6 @@ namespace FishNet.Managing.Timing
     }
 
 }
+
 
 
