@@ -169,7 +169,6 @@ namespace FishNet.Managing.Timing
         [SerializeField]
         private byte _maximumFrameTicks = 2;
 
-        [NonSerialized]
         public byte MaximumFrameTicks
         {
             get
@@ -1238,4 +1237,5 @@ namespace FishNet.Managing.Timing
     }
 
 }
+
 
