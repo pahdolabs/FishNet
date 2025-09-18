@@ -76,6 +76,7 @@ namespace FishNet.Managing.Transporting
         [Tooltip("True to add latency on clientHost as well.")]
         [SerializeField]
         private bool _simulateHost = true;
+        
         /// <summary>
         /// Milliseconds to add between packets. When acting as host this value will be doubled. Added latency will be a minimum of tick rate.
         /// </summary>
@@ -93,6 +94,60 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">Latency as milliseconds.</param>
         public void SetLatency(long value) => _latency = value;
+        
+        /// <summary>
+        /// Interval between latency bursts in seconds.
+        /// </summary>
+        [Tooltip("Interval at which latency bursts occur. 0=no bursts")]
+        [Range(0, 600)]
+        [SerializeField]
+        private double _latencyBurstInterval = 0;
+        /// <summary>
+        /// Gets latency burst interval in seconds. 0f is disabled.
+        /// </summary>
+        /// <returns></returns>
+        public double GetLatencyBurstInterval() => _latencyBurstInterval;
+        /// <summary>
+        /// Sets latency burst interval in seconds. 0f is disabled.
+        /// </summary>
+        /// <param name="value">New Value.</param>
+        public void SetLatencyBurstInterval(double value) => _latencyBurstInterval = value;
+        
+        /// <summary>
+        /// Length of latency bursts in seconds.
+        /// </summary>
+        [Tooltip("Length of latency bursts in seconds. 0 = no bursts")]
+        [Range(0, 5)]
+        [SerializeField]
+        private double _latencyBurstLength = 0;
+        /// <summary>
+        /// Gets latency burst period length in seconds. 0f is disabled.
+        /// </summary>
+        /// <returns></returns>
+        public double GetLatencyBurstLength() => _latencyBurstLength;
+        /// <summary>
+        /// Sets latency burst period length in seconds. 0f is disabled.
+        /// </summary>
+        /// <param name="value">New Value.</param>
+        public void SetLatencyBurstLength(double value) => _latencyBurstLength = value;
+        
+        /// <summary>
+        /// Percentage of packets which should drop during a burst.
+        /// </summary>
+        [Tooltip("Percentage of packets which should drop during a burst.")]
+        [Range(0, 1)]
+        [SerializeField]
+        private double _packetLossBurst = 0;
+        /// <summary>
+        /// Gets packet loss chance during a burst. 1f is a 100% chance to occur.
+        /// </summary>
+        /// <returns></returns>
+        public double GetPacketLossBurst() => _packetLossBurst;
+        /// <summary>
+        /// Sets packet loss chance during a burst. 1f is a 100% chance to occur.
+        /// </summary>
+        /// <param name="value">New Value.</param>
+        public void SetPacketLossBurst(double value) => _packetLossBurst = value;
 
         [Header("Unreliable")]
         /// <summary>
@@ -112,6 +167,43 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetOutOfOrder(double value) => _outOfOrder = value;
+        
+        /// <summary>
+        /// Ticks of jitter to add between packets. Will pick a random value between 0->this value
+        /// </summary>
+        [Tooltip("Ticks of jitter to add between packets. Will pick a random value between 0->this value before sending the next group.")]
+        [Range(0, 60)]
+        [SerializeField]
+        private long _jitter = 0;
+        /// <summary>
+        /// Gets the jitter value.
+        /// </summary>
+        /// <returns></returns>
+        public long GetJitter() => _jitter;
+        /// <summary>
+        /// Sets a new jitter value.
+        /// </summary>
+        /// <param name="value">Latency as milliseconds.</param>
+        public void SetJitter(long value) => _jitter = value;
+        
+        /// <summary>
+        /// Packet loss and ping variability.
+        /// </summary>
+        [Tooltip("Percentage of packet loss and ping variability. Will affect base + burst + ping by consider the loss/ping to a random in the range like _packetLoss-(_packetLoss*_variability) -> _packetLoss+(_packetLoss*_variability)")]
+        [Range(0, 1)]
+        [SerializeField]
+        private double _variability = 0;
+        /// <summary>
+        /// Gets loss and ping variability.
+        /// </summary>
+        /// <returns></returns>
+        public double GetVariability() => _variability;
+        /// <summary>
+        /// Sets loss and ping variability.
+        /// </summary>
+        /// <param name="value">New Value.</param>
+        public void SetVariability(double value) => _variability = value;
+        
         /// <summary>
         /// Percentage of packets which should drop.
         /// </summary>
@@ -278,6 +370,8 @@ namespace FishNet.Managing.Transporting
         }
 
         #region Simulation
+
+        private float _NextLatencyBurstStart = -1f;
         /// <summary>
         /// Returns long latency as a float.
         /// </summary>
@@ -285,7 +379,26 @@ namespace FishNet.Managing.Transporting
         /// <returns></returns>
         private float GetLatencyAsFloat()
         {
-            return (float)(_latency / 1000f);
+            var now = Time.unscaledTimeAsDouble;
+            // see if we're configured for burst latency loss and haven't set the next time yet 
+            if (_NextLatencyBurstStart < 0 && _latencyBurstInterval > 0 && _latencyBurstLength > 0 && _latencyBurst > 0) {
+                var nextInterval = ComputeVariabilityForDouble(_latencyBurstInterval);
+                _NextLatencyBurstStart = now + nextInterval;
+            }
+
+            if (now > _NextLatencyBurstStart) {
+                if (now < _NextLatencyBurstStart + _latencyBurstLength) {
+                    // inside the burst period
+                    var lb = ComputeVariabilityForDouble(_latencyBurst);
+                    return (float)(lb / 1000f);
+                } else {
+                    // compute the next burst interval start time
+                    _NextLatencyBurstStart += _latencyBurstInterval;
+                }
+            }
+            // not a burst period
+            var lat = ComputeVariabilityForDouble(_latency);
+            return (float)(lat / 1000f);
         }
 
         /// <summary>
@@ -347,6 +460,9 @@ namespace FishNet.Managing.Transporting
                 collection.Add(msg);
         }
 
+        // used to track jitter simulation
+        private int _NextSendTick = -1;
+
         /// <summary>
         /// Simulates pending outgoing packets.
         /// </summary>
@@ -357,6 +473,14 @@ namespace FishNet.Managing.Transporting
             {
                 Reset();
                 return;
+            }
+
+            if (--_NextSendTick > 0) {
+                return;
+            }
+            
+            if (_NextSendTick <= 0) {
+                _NextSendTick = Mathf.RoundToInt(_random.NextDouble() * _jitter);
             }
 
             if (toServer)
@@ -403,6 +527,12 @@ namespace FishNet.Managing.Transporting
             _transport.IterateOutgoing(toServer);
         }
 
+        private double ComputeVariabilityForDouble(double value) {
+            var minValue = value - (value * _variability);
+            var maxValue = value + (value * _variability);
+            return _random.NextDouble() * (maxValue - minValue) + minValue;
+        }
+
         private double _NextPacketLossBurstStart = -1f;
 
         /// <summary>
@@ -414,20 +544,23 @@ namespace FishNet.Managing.Transporting
             var now = Time.unscaledTimeAsDouble;
             // see if we're configured for burst packet loss and haven't set the next time yet 
             if (_NextPacketLossBurstStart < 0 && _packetLossBurstInterval > 0 && _packetLossBurstLength > 0 && _packetLossBurst > 0) {
-                _NextPacketLossBurstStart = now + _packetLossBurstInterval;
+                var nextInterval = ComputeVariabilityForDouble(_packetLossBurstInterval);
+                _NextPacketLossBurstStart = now + nextInterval;
             }
 
             if (now > _NextPacketLossBurstStart) {
                 if (now < _NextPacketLossBurstStart + _packetLossBurstLength) {
                     // inside the burst period
-                    return (_packetLossBurst > 0d && (_random.NextDouble() < _packetLossBurst));
+                    var plBurst = ComputeVariabilityForDouble(_packetLossBurst);
+                    return (_packetLossBurst > 0d && (_random.NextDouble() < plBurst));
                 } else {
                     // compute the next burst interval start time
                     _NextPacketLossBurstStart += _packetLossBurstInterval;
                 }
             }
             // not a burst period
-            return (_packetLoss > 0d && (_random.NextDouble() < _packetLoss));
+            var pl = ComputeVariabilityForDouble(_packetLoss);
+            return (_packetLoss > 0d && (_random.NextDouble() < pl));
         }
 
         /// <summary>
