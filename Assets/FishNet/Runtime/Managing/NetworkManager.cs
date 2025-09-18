@@ -73,7 +73,7 @@ namespace FishNet.Managing
         /// </summary>
         public bool Initialized { get; private set; }
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private static List<NetworkManager> _instances = new List<NetworkManager>();
         /// <summary>
@@ -97,7 +97,7 @@ namespace FishNet.Managing
                 }
                 return _instances;
             }
-        }  
+        }
         /// <summary>
         /// True if server is started.
         /// </summary>
@@ -351,7 +351,10 @@ namespace FishNet.Managing
 #endif
             //If there is a framerate to set.
             if (frameRate > 0)
+            {
+                Debug.Log($"Fishnet setting Application.TargetFrameRate: {frameRate}, TickRate: {TimeManager.TickRate}, MAXIMUM_FRAMERATE: {MAXIMUM_FRAMERATE}, ClientFramerate: {(clientStarted ? ClientManager.FrameRate : -1)}, ServerFramerate: {(serverStarted ? ServerManager.FrameRate : -1)}");
                 Application.targetFrameRate = frameRate;
+            }
         }
 
         /// <summary>
@@ -510,7 +513,7 @@ namespace FishNet.Managing
         #region Object pool.
         /// <summary>
         /// Returns an instantiated copy of prefab.
-        /// </summary>        
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NetworkObject GetPooledInstantiated(NetworkObject prefab, bool asServer)
         {
@@ -518,7 +521,7 @@ namespace FishNet.Managing
         }
         /// <summary>
         /// Returns an instantiated copy of prefab.
-        /// </summary>        
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NetworkObject GetPooledInstantiated(NetworkObject prefab, Vector3 position, Quaternion rotation, bool asServer)
         {
@@ -535,7 +538,7 @@ namespace FishNet.Managing
         }
         /// <summary>
         /// Returns an instantiated copy of prefab.
-        /// </summary>       
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NetworkObject GetPooledInstantiated(GameObject prefab, bool asServer)
         {
