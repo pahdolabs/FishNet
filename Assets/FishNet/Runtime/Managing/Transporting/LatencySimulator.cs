@@ -76,8 +76,8 @@ namespace FishNet.Managing.Transporting
         [Tooltip("True to add latency on clientHost as well.")]
         [SerializeField]
         private bool _simulateHost = true;
-
-[Header("Unreliable")]
+        
+        [Header("Unreliable")]
         /// <summary>
         /// Percentage of unreliable packets which should arrive out of order.
         /// </summary>
@@ -95,7 +95,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetOutOfOrder(double value) => _outOfOrder = value;
-        
         /// <summary>
         /// Ticks of jitter to add between packets. Will pick a random value between 0->this value
         /// </summary>
@@ -113,7 +112,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">Latency as milliseconds.</param>
         public void SetJitter(long value) => _jitter = value;
-        
         /// <summary>
         /// Packet loss and latency variability.
         /// </summary>
@@ -131,8 +129,7 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetVariability(double value) => _variability = value;
-        
-        
+        [Header("Latency")]
         /// <summary>
         /// Milliseconds to add between packets. When acting as host this value will be doubled. Added latency will be a minimum of tick rate.
         /// </summary>
@@ -150,7 +147,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">Latency as milliseconds.</param>
         public void SetLatency(long value) => _latency = value;
-        
         /// <summary>
         /// Milliseconds to add between packets during bursts. When acting as host this value will be doubled. Added latency will be a minimum of tick rate.
         /// </summary>
@@ -168,7 +164,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">Latency as milliseconds.</param>
         public void SetLatencyBurst(long value) => _latencyBurst = value;
-        
         /// <summary>
         /// Interval between latency bursts in seconds.
         /// </summary>
@@ -186,7 +181,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetLatencyBurstInterval(double value) => _latencyBurstInterval = value;
-        
         /// <summary>
         /// Length of latency bursts in seconds.
         /// </summary>
@@ -204,7 +198,8 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetLatencyBurstLength(double value) => _latencyBurstLength = value;
-
+        
+        [Header("Packet Loss")]
         /// <summary>
         /// Percentage of packets which should drop.
         /// </summary>
@@ -222,7 +217,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetPacketLoss(double value) => _packetLoss = value;
-        
         /// <summary>
         /// Percentage of packets which should drop during a burst.
         /// </summary>
@@ -240,7 +234,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetPacketLossBurst(double value) => _packetLossBurst = value;
-        
         /// <summary>
         /// Interval between packet loss bursts in seconds.
         /// </summary>
@@ -258,7 +251,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetPacketLossBurstInterval(double value) => _packetLossBurstInterval = value;
-        
         /// <summary>
         /// Length of packet loss bursts in seconds.
         /// </summary>
@@ -579,6 +571,7 @@ namespace FishNet.Managing.Transporting
         #endregion
     }
 }
+
 
 
 
