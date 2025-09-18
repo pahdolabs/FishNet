@@ -204,6 +204,24 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetLatencyBurstLength(double value) => _latencyBurstLength = value;
+
+        /// <summary>
+        /// Percentage of packets which should drop.
+        /// </summary>
+        [Tooltip("Percentage of packets which should drop.")]
+        [Range(0, 1)]
+        [SerializeField]
+        private double _packetLoss = 0;
+        /// <summary>
+        /// Gets packet loss chance. 1f is a 100% chance to occur.
+        /// </summary>
+        /// <returns></returns>
+        public double GetPacketLost() => _packetLoss;
+        /// <summary>
+        /// Sets packet loss chance. 1f is a 100% chance to occur.
+        /// </summary>
+        /// <param name="value">New Value.</param>
+        public void SetPacketLoss(double value) => _packetLoss = value;
         
         /// <summary>
         /// Percentage of packets which should drop during a burst.
@@ -222,24 +240,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetPacketLossBurst(double value) => _packetLossBurst = value;
-        
-        /// <summary>
-        /// Percentage of packets which should drop.
-        /// </summary>
-        [Tooltip("Percentage of packets which should drop.")]
-        [Range(0, 1)]
-        [SerializeField]
-        private double _packetLoss = 0;
-        /// <summary>
-        /// Gets packet loss chance. 1f is a 100% chance to occur.
-        /// </summary>
-        /// <returns></returns>
-        public double GetPacketLost() => _packetLoss;
-        /// <summary>
-        /// Sets packet loss chance. 1f is a 100% chance to occur.
-        /// </summary>
-        /// <param name="value">New Value.</param>
-        public void SetPacketLoss(double value) => _packetLoss = value;
         
         /// <summary>
         /// Interval between packet loss bursts in seconds.
@@ -579,6 +579,7 @@ namespace FishNet.Managing.Transporting
         #endregion
     }
 }
+
 
 
 
