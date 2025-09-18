@@ -76,10 +76,7 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         [Tooltip("True to add latency on clientHost as well.")]
         [SerializeField]
-        private bool _simulateHost = true;
-        
-        [Header("Unreliable")]
-        
+        private bool _simulateHost = true;        
         /// <summary>
         /// Percentage of unreliable packets which should arrive out of order.
         /// </summary>
@@ -131,8 +128,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetVariability(double value) => _variability = value;
-        [Header("Latency Configs")]
-        
         /// <summary>
         /// Milliseconds to add between packets. When acting as host this value will be doubled. Added latency will be a minimum of tick rate.
         /// </summary>
@@ -201,9 +196,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetLatencyBurstLength(double value) => _latencyBurstLength = value;
-        
-        [Header("Packet Loss Configs")]
-        
         /// <summary>
         /// Percentage of packets which should drop.
         /// </summary>
@@ -575,6 +567,7 @@ namespace FishNet.Managing.Transporting
         #endregion
     }
 }
+
 
 
 
