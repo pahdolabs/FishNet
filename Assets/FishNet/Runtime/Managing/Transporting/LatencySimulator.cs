@@ -76,6 +76,61 @@ namespace FishNet.Managing.Transporting
         [Tooltip("True to add latency on clientHost as well.")]
         [SerializeField]
         private bool _simulateHost = true;
+
+[Header("Unreliable")]
+        /// <summary>
+        /// Percentage of unreliable packets which should arrive out of order.
+        /// </summary>
+        [Tooltip("Percentage of unreliable packets which should arrive out of order.")]
+        [Range(0f, 1f)]
+        [SerializeField]
+        private double _outOfOrder = 0;
+        /// <summary>
+        /// Out of order chance, 1f is a 100% chance to occur.
+        /// </summary>
+        /// <returns></returns>
+        public double GetOutOfOrder() => _outOfOrder;
+        /// <summary>
+        /// Sets out of order chance. 1f is a 100% chance to occur.
+        /// </summary>
+        /// <param name="value">New Value.</param>
+        public void SetOutOfOrder(double value) => _outOfOrder = value;
+        
+        /// <summary>
+        /// Ticks of jitter to add between packets. Will pick a random value between 0->this value
+        /// </summary>
+        [Tooltip("Ticks of jitter to add between packets. Will pick a random value between 0->this value before sending the next group.")]
+        [Range(0, 60)]
+        [SerializeField]
+        private long _jitter = 0;
+        /// <summary>
+        /// Gets the jitter value.
+        /// </summary>
+        /// <returns></returns>
+        public long GetJitter() => _jitter;
+        /// <summary>
+        /// Sets a new jitter value.
+        /// </summary>
+        /// <param name="value">Latency as milliseconds.</param>
+        public void SetJitter(long value) => _jitter = value;
+        
+        /// <summary>
+        /// Packet loss and ping variability.
+        /// </summary>
+        [Tooltip("Percentage of packet loss and ping variability. Will affect base + burst + ping by consider the loss/ping to a random in the range like _packetLoss-(_packetLoss*_variability) -> _packetLoss+(_packetLoss*_variability)")]
+        [Range(0, 1)]
+        [SerializeField]
+        private double _variability = 0;
+        /// <summary>
+        /// Gets loss and ping variability.
+        /// </summary>
+        /// <returns></returns>
+        public double GetVariability() => _variability;
+        /// <summary>
+        /// Sets loss and ping variability.
+        /// </summary>
+        /// <param name="value">New Value.</param>
+        public void SetVariability(double value) => _variability = value;
         
         /// <summary>
         /// Milliseconds to add between packets. When acting as host this value will be doubled. Added latency will be a minimum of tick rate.
@@ -148,61 +203,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetPacketLossBurst(double value) => _packetLossBurst = value;
-
-        [Header("Unreliable")]
-        /// <summary>
-        /// Percentage of unreliable packets which should arrive out of order.
-        /// </summary>
-        [Tooltip("Percentage of unreliable packets which should arrive out of order.")]
-        [Range(0f, 1f)]
-        [SerializeField]
-        private double _outOfOrder = 0;
-        /// <summary>
-        /// Out of order chance, 1f is a 100% chance to occur.
-        /// </summary>
-        /// <returns></returns>
-        public double GetOutOfOrder() => _outOfOrder;
-        /// <summary>
-        /// Sets out of order chance. 1f is a 100% chance to occur.
-        /// </summary>
-        /// <param name="value">New Value.</param>
-        public void SetOutOfOrder(double value) => _outOfOrder = value;
-        
-        /// <summary>
-        /// Ticks of jitter to add between packets. Will pick a random value between 0->this value
-        /// </summary>
-        [Tooltip("Ticks of jitter to add between packets. Will pick a random value between 0->this value before sending the next group.")]
-        [Range(0, 60)]
-        [SerializeField]
-        private long _jitter = 0;
-        /// <summary>
-        /// Gets the jitter value.
-        /// </summary>
-        /// <returns></returns>
-        public long GetJitter() => _jitter;
-        /// <summary>
-        /// Sets a new jitter value.
-        /// </summary>
-        /// <param name="value">Latency as milliseconds.</param>
-        public void SetJitter(long value) => _jitter = value;
-        
-        /// <summary>
-        /// Packet loss and ping variability.
-        /// </summary>
-        [Tooltip("Percentage of packet loss and ping variability. Will affect base + burst + ping by consider the loss/ping to a random in the range like _packetLoss-(_packetLoss*_variability) -> _packetLoss+(_packetLoss*_variability)")]
-        [Range(0, 1)]
-        [SerializeField]
-        private double _variability = 0;
-        /// <summary>
-        /// Gets loss and ping variability.
-        /// </summary>
-        /// <returns></returns>
-        public double GetVariability() => _variability;
-        /// <summary>
-        /// Sets loss and ping variability.
-        /// </summary>
-        /// <param name="value">New Value.</param>
-        public void SetVariability(double value) => _variability = value;
         
         /// <summary>
         /// Percentage of packets which should drop.
@@ -257,24 +257,6 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetPacketLossBurstLength(double value) => _packetLossBurstLength = value;
-        
-        /// <summary>
-        /// Percentage of packets which should drop during a burst.
-        /// </summary>
-        [Tooltip("Percentage of packets which should drop during a burst.")]
-        [Range(0, 1)]
-        [SerializeField]
-        private double _packetLossBurst = 0;
-        /// <summary>
-        /// Gets packet loss chance during a burst. 1f is a 100% chance to occur.
-        /// </summary>
-        /// <returns></returns>
-        public double GetPacketLossBurst() => _packetLossBurst;
-        /// <summary>
-        /// Sets packet loss chance during a burst. 1f is a 100% chance to occur.
-        /// </summary>
-        /// <param name="value">New Value.</param>
-        public void SetPacketLossBurst(double value) => _packetLossBurst = value;
         #endregion
 
         #region Private
@@ -578,4 +560,5 @@ namespace FishNet.Managing.Transporting
         #endregion
     }
 }
+
 
