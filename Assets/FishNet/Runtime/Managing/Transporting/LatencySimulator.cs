@@ -481,7 +481,7 @@ namespace FishNet.Managing.Transporting
             }
             
             if (_NextSendTick <= 0) {
-                _NextSendTick = Mathf.RoundToInt(_random.NextDouble() * _jitter);
+                _NextSendTick = Mathf.RoundToInt((float)(_random.NextDouble() * _jitter));
             }
 
             if (toServer)
@@ -579,6 +579,7 @@ namespace FishNet.Managing.Transporting
         #endregion
     }
 }
+
 
 
 
