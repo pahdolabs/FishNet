@@ -115,19 +115,19 @@ namespace FishNet.Managing.Transporting
         public void SetJitter(long value) => _jitter = value;
         
         /// <summary>
-        /// Packet loss and ping variability.
+        /// Packet loss and latency variability.
         /// </summary>
-        [Tooltip("Percentage of packet loss and ping variability. Will affect base + burst + ping by consider the loss/ping to a random in the range like _packetLoss-(_packetLoss*_variability) -> _packetLoss+(_packetLoss*_variability)")]
+        [Tooltip("Percentage of packet loss and latency variability. Will affect base + burst + ping by consider the loss/ping to a random in the range like _packetLoss-(_packetLoss*_variability) -> _packetLoss+(_packetLoss*_variability)")]
         [Range(0, 1)]
         [SerializeField]
         private double _variability = 0;
         /// <summary>
-        /// Gets loss and ping variability.
+        /// Gets loss and latency variability.
         /// </summary>
         /// <returns></returns>
         public double GetVariability() => _variability;
         /// <summary>
-        /// Sets loss and ping variability.
+        /// Sets loss and latency variability.
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetVariability(double value) => _variability = value;
@@ -579,6 +579,7 @@ namespace FishNet.Managing.Transporting
         #endregion
     }
 }
+
 
 
 
