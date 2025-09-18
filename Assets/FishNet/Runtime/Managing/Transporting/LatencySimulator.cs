@@ -372,7 +372,7 @@ namespace FishNet.Managing.Transporting
 
         #region Simulation
 
-        private float _NextLatencyBurstStart = -1f;
+        private double _NextLatencyBurstStart = -1;
         /// <summary>
         /// Returns long latency as a float.
         /// </summary>
@@ -534,7 +534,7 @@ namespace FishNet.Managing.Transporting
             return _random.NextDouble() * (maxValue - minValue) + minValue;
         }
 
-        private double _NextPacketLossBurstStart = -1f;
+        private double _NextPacketLossBurstStart = -1;
 
         /// <summary>
         /// Returns if a packet should drop.
@@ -579,6 +579,7 @@ namespace FishNet.Managing.Transporting
         #endregion
     }
 }
+
 
 
 
