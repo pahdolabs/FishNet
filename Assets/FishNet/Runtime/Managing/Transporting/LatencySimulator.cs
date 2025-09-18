@@ -132,6 +132,7 @@ namespace FishNet.Managing.Transporting
         /// <param name="value">New Value.</param>
         public void SetVariability(double value) => _variability = value;
         
+        
         /// <summary>
         /// Milliseconds to add between packets. When acting as host this value will be doubled. Added latency will be a minimum of tick rate.
         /// </summary>
@@ -149,6 +150,24 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">Latency as milliseconds.</param>
         public void SetLatency(long value) => _latency = value;
+        
+        /// <summary>
+        /// Milliseconds to add between packets during bursts. When acting as host this value will be doubled. Added latency will be a minimum of tick rate.
+        /// </summary>
+        [Tooltip("Milliseconds to add between packets during bursts. When acting as host this value will be doubled. Added latency will be a minimum of tick rate.")]
+        [Range(0, 60000)]
+        [SerializeField]
+        private long _latencyBurst = 0;
+        /// <summary>
+        /// Gets the latency burst value.
+        /// </summary>
+        /// <returns></returns>
+        public long GetLatencyBurst() => _latencyBurst;
+        /// <summary>
+        /// Sets a new latency burst value.
+        /// </summary>
+        /// <param name="value">Latency as milliseconds.</param>
+        public void SetLatencyBurst(long value) => _latencyBurst = value;
         
         /// <summary>
         /// Interval between latency bursts in seconds.
@@ -560,5 +579,6 @@ namespace FishNet.Managing.Transporting
         #endregion
     }
 }
+
 
 
