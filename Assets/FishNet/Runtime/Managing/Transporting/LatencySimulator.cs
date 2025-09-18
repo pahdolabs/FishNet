@@ -1,4 +1,4 @@
-﻿using FishNet.Connection;
+using FishNet.Connection;
 using FishNet.Transporting;
 using FishNet.Utility.Performance;
 using System;
@@ -129,6 +129,60 @@ namespace FishNet.Managing.Transporting
         /// </summary>
         /// <param name="value">New Value.</param>
         public void SetPacketLoss(double value) => _packetLoss = value;
+        
+        /// <summary>
+        /// Interval between packet loss bursts in seconds.
+        /// </summary>
+        [Tooltip("Interval at which packet loss bursts occur. 0=no bursts")]
+        [Range(0, 600)]
+        [SerializeField]
+        private double _packetLossBurstInterval = 0;
+        /// <summary>
+        /// Gets packet loss burst interval in seconds. 0f is disabled.
+        /// </summary>
+        /// <returns></returns>
+        public double GetPacketLossBurstInterval() => _packetLossBurstInterval;
+        /// <summary>
+        /// Sets packet loss burst interval in seconds. 0f is disabled.
+        /// </summary>
+        /// <param name="value">New Value.</param>
+        public void SetPacketLossBurstInterval(double value) => _packetLossBurstInterval = value;
+        
+        /// <summary>
+        /// Length of packet loss bursts in seconds.
+        /// </summary>
+        [Tooltip("Length of packet loss bursts in seconds. 0 = no bursts")]
+        [Range(0, 5)]
+        [SerializeField]
+        private double _packetLossBurstLength = 0;
+        /// <summary>
+        /// Gets packet loss burst period length in seconds. 0f is disabled.
+        /// </summary>
+        /// <returns></returns>
+        public double GetPacketLossBurstLength() => _packetLossBurstLength;
+        /// <summary>
+        /// Sets packet loss burst period length in seconds. 0f is disabled.
+        /// </summary>
+        /// <param name="value">New Value.</param>
+        public void SetPacketLossBurstLength(double value) => _packetLossBurstLength = value;
+        
+        /// <summary>
+        /// Percentage of packets which should drop during a burst.
+        /// </summary>
+        [Tooltip("Percentage of packets which should drop during a burst.")]
+        [Range(0, 1)]
+        [SerializeField]
+        private double _packetLossBurst = 0;
+        /// <summary>
+        /// Gets packet loss chance during a burst. 1f is a 100% chance to occur.
+        /// </summary>
+        /// <returns></returns>
+        public double GetPacketLossBurst() => _packetLossBurst;
+        /// <summary>
+        /// Sets packet loss chance during a burst. 1f is a 100% chance to occur.
+        /// </summary>
+        /// <param name="value">New Value.</param>
+        public void SetPacketLossBurst(double value) => _packetLossBurst = value;
         #endregion
 
         #region Private
@@ -349,12 +403,30 @@ namespace FishNet.Managing.Transporting
             _transport.IterateOutgoing(toServer);
         }
 
+        private double _NextPacketLossBurstStart = -1f;
+
         /// <summary>
         /// Returns if a packet should drop.
         /// </summary>
         /// <returns></returns>
         private bool DropPacket()
         {
+            var now = Time.unscaledTimeAsDouble;
+            // see if we're configured for burst packet loss and haven't set the next time yet 
+            if (_NextPacketLossBurstStart < 0 && _packetLossBurstInterval > 0 && _packetLossBurstLength > 0 && _packetLossBurst > 0) {
+                _NextPacketLossBurstStart = now + _packetLossBurstInterval;
+            }
+
+            if (now > _NextPacketLossBurstStart) {
+                if (now < _NextPacketLossBurstStart + _packetLossBurstLength) {
+                    // inside the burst period
+                    return (_packetLossBurst > 0d && (_random.NextDouble() < _packetLossBurst));
+                } else {
+                    // compute the next burst interval start time
+                    _NextPacketLossBurstStart += _packetLossBurstInterval;
+                }
+            }
+            // not a burst period
             return (_packetLoss > 0d && (_random.NextDouble() < _packetLoss));
         }
 
