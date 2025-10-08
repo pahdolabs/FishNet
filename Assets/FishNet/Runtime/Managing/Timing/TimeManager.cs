@@ -1,4 +1,4 @@
-﻿using FishNet.Connection;
+using FishNet.Connection;
 using FishNet.Documenting;
 using FishNet.Managing.Transporting;
 using FishNet.Object;
@@ -1225,3 +1225,6 @@ namespace FishNet.Managing.Timing
     }
 
 }
+
+
+

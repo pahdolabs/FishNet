@@ -312,7 +312,7 @@ namespace FishNet.Object
             _networkObjectCache.NetworkManager.TransportManager.SendToClient((byte)channel, writer.GetArraySegment(), Owner);
 
             methodWriter.Store();
-            writer.Store();
+            writer.StoreLength();
         }
 
         /// <summary> 
@@ -764,4 +764,5 @@ namespace FishNet.Object
         }
 
     }
+
 }
