@@ -147,10 +147,6 @@ namespace FishNet.Object.Synchronizing
         /// Setting to false will allow inspector serialization of this object. When false you must still initialize this object on it's field declaration, but never anywhere else.
         /// </summary>
         public bool RequireReadOnly = true;
-        /// <summary>
-        /// Channel to use. Unreliable SyncObjectcs can be dangerous/inconsistent if used improperly. You should occassionally force a full sync of this object with DirtyAll and/or an RPC to update the object.
-        /// </summary>
-        public Channel Channel;
     }
 
     /// <summary>
@@ -183,4 +179,3 @@ namespace FishNet.Object.Synchronizing
     }
 
 }
-
