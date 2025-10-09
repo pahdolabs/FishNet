@@ -1,4 +1,4 @@
-using FishNet.CodeGenerating.Extension;
+﻿using FishNet.CodeGenerating.Extension;
 using FishNet.CodeGenerating.Helping;
 using FishNet.CodeGenerating.Helping.Extension;
 using FishNet.Configuring;
@@ -324,7 +324,7 @@ namespace FishNet.CodeGenerating.Processing
                  * that the attributes are no longer used. If field is
                  * not a syncvar then error that the user needs to convert to
                  * SyncVar<T>.
-                 *
+                 * 
                  * This is to transition users into the new SyncVar. After they change
                  * their field tp SyncVar<T> an error will appear that the
                  * SyncVar/Object attributes are no longer used. */
@@ -648,7 +648,7 @@ namespace FishNet.CodeGenerating.Processing
         /// <summary>
         /// Creates or gets a SyncType class for originalFieldDef.
         /// </summary>
-        /// <returns></returns>
+        /// <returns></returns>  
         private FieldDefinition CreateSyncVarFieldDefinition(TypeDefinition typeDef, FieldDefinition originalFieldDef, out CreatedSyncVar createdSyncVar)
         {
             createdSyncVar = base.GetClass<CreatedSyncVarGenerator>().GetCreatedSyncVar(originalFieldDef, true);
@@ -756,7 +756,7 @@ namespace FishNet.CodeGenerating.Processing
             ParameterDefinition calledByUserParameterDef = base.GetClass<GeneralHelper>().CreateParameter(createdSetMethodDef, typeof(bool), "asServer");
             processor = createdSetMethodDef.Body.GetILProcessor();
 
-            /* Assign to new value. Do this first because SyncVar<T> calls hook
+            /* Assign to new value. Do this first because SyncVar<T> calls hook 
              * and value needs to be updated before hook. Only update
              * value if calledByUser(asServer) or (!calledByUser && !base.IsServer).
              * This ensures clientHost will not overwrite server value. */
@@ -766,7 +766,7 @@ namespace FishNet.CodeGenerating.Processing
             //if (calledByUser || !base.IsServer)
             processor.Emit(OpCodes.Ldarg, calledByUserParameterDef);
             processor.Emit(OpCodes.Brtrue, beforeChangeFieldInst);
-            processor.Emit(OpCodes.Ldarg_0); //this.
+            processor.Emit(OpCodes.Ldarg_0); //this.            
             processor.Emit(OpCodes.Call, base.GetClass<NetworkBehaviourHelper>().IsServerInitialized_MethodRef);
             processor.Emit(OpCodes.Brtrue, afterChangeFieldInst);
 
@@ -852,7 +852,7 @@ namespace FishNet.CodeGenerating.Processing
                 sendRate = attribute.GetField(SENDRATE_NAME, -1f);
                 writePermissions = attribute.GetField(WRITEPERMISSIONS_NAME, WritePermission.ServerOnly);
                 readPermissions = attribute.GetField(READPERMISSIONS_NAME, ReadPermission.Observers);
-                channel = attribute.GetField("Channel", Channel.Reliable);
+                channel = Channel.Reliable; //attribute.GetField("Channel", Channel.Reliable);
             }
 
             //Set needed methods from syncbase.
@@ -915,7 +915,7 @@ namespace FishNet.CodeGenerating.Processing
                 sendRate = attribute.GetField(SENDRATE_NAME, -1f);
                 writePermissions = attribute.GetField(WRITEPERMISSIONS_NAME, WritePermission.ServerOnly);
                 readPermissions = attribute.GetField(READPERMISSIONS_NAME, ReadPermission.Observers);
-                channel = attribute.GetField("Channel", Channel.Reliable);
+                channel = Channel.Reliable; //attribute.GetField("Channel", Channel.Reliable);
             }
 
             //This import shouldn't be needed but cecil is stingy so rather be safe than sorry.
@@ -979,7 +979,7 @@ namespace FishNet.CodeGenerating.Processing
                 sendRate = attribute.GetField(SENDRATE_NAME, -1f);
                 writePermissions = attribute.GetField(WRITEPERMISSIONS_NAME, WritePermission.ServerOnly);
                 readPermissions = attribute.GetField(READPERMISSIONS_NAME, ReadPermission.Observers);
-                channel = attribute.GetField("Channel", Channel.Reliable);
+                channel = Channel.Reliable; //attribute.GetField("Channel", Channel.Reliable);
             }
 
             //This import shouldn't be needed but cecil is stingy so rather be safe than sorry.
@@ -1415,7 +1415,7 @@ namespace FishNet.CodeGenerating.Processing
 
                 typeDef.Methods.Add(readSyncVarMd);
             }
-            //Already created.
+            //Already created. 
             else
             {
                 processor = readSyncVarMd.Body.GetILProcessor();
