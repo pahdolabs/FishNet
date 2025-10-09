@@ -288,8 +288,8 @@ namespace FishNet.Object.Synchronizing
         /// <summary>
         /// Reads and sets the current values for server or client.
         /// </summary>
-        //[APIExclude]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [APIExclude]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Read(PooledReader reader, bool asServer)
         {
             /* When !asServer don't make changes if server is running.
@@ -634,4 +634,3 @@ namespace FishNet.Object.Synchronizing
 
     }
 }
-
