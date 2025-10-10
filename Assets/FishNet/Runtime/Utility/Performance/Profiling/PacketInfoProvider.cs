@@ -63,6 +63,17 @@ namespace FishNet.Utility.Performance.Profiling
                     }
                     else
                     {
+                        // check for name of delegate
+                        if (nb.TryGetMethodNameForRpcRPC((uint)propertyHash, out var methodName1))
+                        {
+                            return methodName1;
+                        }
+                        if (nb.TryGetMethodNameForRpcPrediction((uint)propertyHash, out var methodName2))
+                        {
+                            return methodName2;
+                        }
+                        
+                        // otherwise.. not a delegate
                         List<string> rpcNamesList = new();
                         int rpcCount = 0;
                         // Iterate the replicates first, that's what the codegen does
@@ -77,11 +88,13 @@ namespace FishNet.Utility.Performance.Profiling
                                 }
                             }
                         }
+
                         foreach (var methodInfo in nb.GetType().GetMethods())
                         {
                             foreach (var customAttribute in methodInfo.CustomAttributes)
                             {
-                                if (customAttribute.AttributeType.FullName == typeof(ObserversRpcAttribute).FullName ||
+                                if (customAttribute.AttributeType.FullName ==
+                                    typeof(ObserversRpcAttribute).FullName ||
                                     customAttribute.AttributeType.FullName == typeof(TargetRpcAttribute).FullName ||
                                     customAttribute.AttributeType.FullName == typeof(ReconcileAttribute).FullName)
                                 {
@@ -90,13 +103,14 @@ namespace FishNet.Utility.Performance.Profiling
                                         res = methodInfo.Name;
                                         break;
                                     }
+
                                     rpcCount++;
                                     rpcNamesList.Add(methodInfo.Name);
                                 }
                             }
                         }
-
                         RpcNamesCache[nb.GetType()] = rpcNamesList;
+                        
                     }
                     break;
             }

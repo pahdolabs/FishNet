@@ -79,6 +79,25 @@ namespace FishNet.Object
         /// Registered Reconcile methods.
         /// </summary>
         private readonly Dictionary<uint, ReconcileRpcDelegate> _reconcileRpcDelegates = new Dictionary<uint, ReconcileRpcDelegate>();
+        
+        public bool TryGetMethodNameForRpcPrediction(uint hash, out string methodName)
+        {
+            if (_reconcileRpcDelegates.TryGetValueIL2CPP(hash, out ReconcileRpcDelegate del1))
+            {
+                methodName = del1.Method.Name;
+                return true;
+            }
+            
+            if (_replicateRpcDelegates.TryGetValueIL2CPP(hash, out ReplicateRpcDelegate del2))
+            {
+                methodName = del2.Method.Name;
+                return true;
+            }
+            
+            methodName = null;
+            return false;
+        }
+        
         /// <summary>
         /// True if initialized compnents for prediction.
         /// </summary>

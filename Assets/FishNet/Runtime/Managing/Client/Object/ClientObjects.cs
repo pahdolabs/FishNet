@@ -333,7 +333,10 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)reader.PeekByte(), (PacketId)packetId, dataLength));
+                // on unreliable packets, we get -2, which means.. read the rest of the buffer
+                var packetReadLength = dataLength == -2 ? reader.Remaining : dataLength;
+                
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)reader.PeekByte(), (PacketId)packetId, packetReadLength));
                 /* Length of data to be read for syncvars.
                  * This is important because syncvars are never
                  * a set length and data must be read through completion.
@@ -376,7 +379,10 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.Reconcile, dataLength));
+                // on unreliable packets, we get -2, which means.. read the rest of the buffer
+                var packetReadLength = dataLength == -2 ? reader.Remaining : dataLength;
+                
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.Reconcile, packetReadLength));
                 nb.OnReconcileRpc(null, reader, channel);
             }
             else
@@ -395,7 +401,10 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.ObserversRpc, dataLength));
+                // on unreliable packets, we get -2, which means.. read the rest of the buffer
+                var packetReadLength = dataLength == -2 ? reader.Remaining : dataLength;
+                
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.ObserversRpc, packetReadLength));
                 nb.OnObserversRpc(null, reader, channel);
             }
             else
@@ -413,7 +422,10 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.TargetRpc, dataLength));
+                // on unreliable packets, we get -2, which means.. read the rest of the buffer
+                var packetReadLength = dataLength == -2 ? reader.Remaining : dataLength;
+                
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.TargetRpc, packetReadLength));
                 nb.OnTargetRpc(null, reader, channel);
             }
             else

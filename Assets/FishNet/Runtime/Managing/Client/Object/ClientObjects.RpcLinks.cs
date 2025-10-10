@@ -46,13 +46,25 @@ namespace FishNet.Managing.Client
             //Found NetworkObject for link.
             if (Spawned.TryGetValueIL2CPP(link.ObjectId, out NetworkObject nob))
             {
+                // on unreliable packets, we get -2, which means.. read the rest of the buffer
+                var packetReadLength = dataLength == -2 ? reader.Remaining : dataLength;
+                
                 NetworkBehaviour nb = nob.NetworkBehaviours[link.ComponentIndex];
                 if (link.RpcType == RpcType.Target)
+                {
+                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.TargetRpc, packetReadLength));
                     nb.OnTargetRpc(link.RpcHash, reader, channel);
+                }
                 else if (link.RpcType == RpcType.Observers)
+                {
+                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.ObserversRpc, packetReadLength));
                     nb.OnObserversRpc(link.RpcHash, reader, channel);
+                }
                 else if (link.RpcType == RpcType.Reconcile)
+                {
+                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.Reconcile, packetReadLength));
                     nb.OnReconcileRpc(link.RpcHash, reader, channel);
+                }
             }
             //Could not find NetworkObject.
             else
