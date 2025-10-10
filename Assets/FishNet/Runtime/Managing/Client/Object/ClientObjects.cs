@@ -333,10 +333,7 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                // on unreliable packets, we get -2, which means.. read the rest of the buffer
-                var packetReadLength = dataLength == -2 ? reader.Remaining : dataLength;
-                
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)reader.PeekByte(), (PacketId)packetId, packetReadLength));
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)reader.PeekByte(), (PacketId)packetId, dataLength));
                 /* Length of data to be read for syncvars.
                  * This is important because syncvars are never
                  * a set length and data must be read through completion.
@@ -379,11 +376,10 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                // on unreliable packets, we get -2, which means.. read the rest of the buffer
-                var packetReadLength = dataLength == -2 ? reader.Remaining : dataLength;
-                
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.Reconcile, packetReadLength));
+                var positionBefore = reader.Position;
                 nb.OnReconcileRpc(null, reader, channel);
+                // rpc read length is variable; so compare the before and after buffer position to know the real size
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.Reconcile, reader.Position-positionBefore));
             }
             else
                 SkipDataLength((ushort)PacketId.ObserversRpc, reader, dataLength);
@@ -401,11 +397,10 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                // on unreliable packets, we get -2, which means.. read the rest of the buffer
-                var packetReadLength = dataLength == -2 ? reader.Remaining : dataLength;
-                
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.ObserversRpc, packetReadLength));
+                var positionBefore = reader.Position;
                 nb.OnObserversRpc(null, reader, channel);
+                // rpc read length is variable; so compare the before and after buffer position to know the real size
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.ObserversRpc, reader.Position-positionBefore));
             }
             else
                 SkipDataLength((ushort)PacketId.ObserversRpc, reader, dataLength);
@@ -422,11 +417,10 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                // on unreliable packets, we get -2, which means.. read the rest of the buffer
-                var packetReadLength = dataLength == -2 ? reader.Remaining : dataLength;
-                
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.TargetRpc, packetReadLength));
+                var positionBefore = reader.Position;
                 nb.OnTargetRpc(null, reader, channel);
+                // rpc read length is variable; so compare the before and after buffer position to know the real size
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.TargetRpc, reader.Position-positionBefore));
             }
             else
                 SkipDataLength((ushort)PacketId.TargetRpc, reader, dataLength);

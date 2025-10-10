@@ -46,24 +46,27 @@ namespace FishNet.Managing.Client
             //Found NetworkObject for link.
             if (Spawned.TryGetValueIL2CPP(link.ObjectId, out NetworkObject nob))
             {
-                // on unreliable packets, we get -2, which means.. read the rest of the buffer
-                var packetReadLength = dataLength == -2 ? reader.Remaining : dataLength;
-                
                 NetworkBehaviour nb = nob.NetworkBehaviours[link.ComponentIndex];
                 if (link.RpcType == RpcType.Target)
                 {
-                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.TargetRpc, packetReadLength));
+                    var positionBefore = reader.Position;
                     nb.OnTargetRpc(link.RpcHash, reader, channel);
+                    // rpc read length is variable; so compare the before and after buffer position to know the real size
+                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.TargetRpc, reader.Position-positionBefore));
                 }
                 else if (link.RpcType == RpcType.Observers)
                 {
-                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.ObserversRpc, packetReadLength));
+                    var positionBefore = reader.Position;
                     nb.OnObserversRpc(link.RpcHash, reader, channel);
+                    // rpc read length is variable; so compare the before and after buffer position to know the real size
+                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.ObserversRpc, reader.Position-positionBefore));
                 }
                 else if (link.RpcType == RpcType.Reconcile)
                 {
-                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.Reconcile, packetReadLength));
+                    var positionBefore = reader.Position;
                     nb.OnReconcileRpc(link.RpcHash, reader, channel);
+                    // rpc read length is variable; so compare the before and after buffer position to know the real size
+                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.Reconcile, reader.Position-positionBefore));
                 }
             }
             //Could not find NetworkObject.
