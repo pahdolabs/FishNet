@@ -48,11 +48,26 @@ namespace FishNet.Managing.Client
             {
                 NetworkBehaviour nb = nob.NetworkBehaviours[link.ComponentIndex];
                 if (link.RpcType == RpcType.Target)
+                {
+                    var positionBefore = reader.Position;
                     nb.OnTargetRpc(link.RpcHash, reader, channel);
+                    // rpc read length is variable; so compare the before and after buffer position to know the real size
+                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.TargetRpc, reader.Position-positionBefore));
+                }
                 else if (link.RpcType == RpcType.Observers)
+                {
+                    var positionBefore = reader.Position;
                     nb.OnObserversRpc(link.RpcHash, reader, channel);
+                    // rpc read length is variable; so compare the before and after buffer position to know the real size
+                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.ObserversRpc, reader.Position-positionBefore));
+                }
                 else if (link.RpcType == RpcType.Reconcile)
+                {
+                    var positionBefore = reader.Position;
                     nb.OnReconcileRpc(link.RpcHash, reader, channel);
+                    // rpc read length is variable; so compare the before and after buffer position to know the real size
+                    OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)link.RpcHash, PacketId.Reconcile, reader.Position-positionBefore));
+                }
             }
             //Could not find NetworkObject.
             else

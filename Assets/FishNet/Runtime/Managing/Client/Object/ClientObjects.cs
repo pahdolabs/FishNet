@@ -376,8 +376,10 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.Reconcile, dataLength));
+                var positionBefore = reader.Position;
                 nb.OnReconcileRpc(null, reader, channel);
+                // rpc read length is variable; so compare the before and after buffer position to know the real size
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.Reconcile, reader.Position-positionBefore));
             }
             else
                 SkipDataLength((ushort)PacketId.ObserversRpc, reader, dataLength);
@@ -395,8 +397,10 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.ObserversRpc, dataLength));
+                var positionBefore = reader.Position;
                 nb.OnObserversRpc(null, reader, channel);
+                // rpc read length is variable; so compare the before and after buffer position to know the real size
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.ObserversRpc, reader.Position-positionBefore));
             }
             else
                 SkipDataLength((ushort)PacketId.ObserversRpc, reader, dataLength);
@@ -413,8 +417,10 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
-                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.TargetRpc, dataLength));
+                var positionBefore = reader.Position;
                 nb.OnTargetRpc(null, reader, channel);
+                // rpc read length is variable; so compare the before and after buffer position to know the real size
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.TargetRpc, reader.Position-positionBefore));
             }
             else
                 SkipDataLength((ushort)PacketId.TargetRpc, reader, dataLength);

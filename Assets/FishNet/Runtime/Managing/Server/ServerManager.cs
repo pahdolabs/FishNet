@@ -115,7 +115,7 @@ namespace FishNet.Managing.Server
         /// SyncTypeRate cannot yet be changed at runtime because this would require recalculating rates on SyncBase, which is not yet implemented.
         /// </summary>
         /// <returns></returns>
-        internal float GetSynctypeRate() => _syncTypeRate;
+        public float GetSynctypeRate() => _syncTypeRate;
         [Tooltip("Default send rate for SyncTypes. A value of 0f will send changed values every tick.")]
         [Range(0f, 60f)]
         [SerializeField]

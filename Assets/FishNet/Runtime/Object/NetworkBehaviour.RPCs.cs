@@ -47,6 +47,25 @@ namespace FishNet.Object
         /// Registered TargetRpc methods.
         /// </summary>
         private readonly Dictionary<uint, ClientRpcDelegate> _targetRpcDelegates = new Dictionary<uint, ClientRpcDelegate>();
+
+        public bool TryGetMethodNameForRpcRPC(uint hash, out string methodName)
+        {
+            if (_targetRpcDelegates.TryGetValueIL2CPP(hash, out ClientRpcDelegate del1))
+            {
+                methodName = del1.Method.Name;
+                return true;
+            }
+            
+            if (_observersRpcDelegates.TryGetValueIL2CPP(hash, out ClientRpcDelegate del2))
+            {
+                methodName = del2.Method.Name;
+                return true;
+            }
+            
+            methodName = null;
+            return false;
+        }
+        
         /// <summary>
         /// Number of total RPC methods for scripts in the same inheritance tree for this instance.
         /// </summary>

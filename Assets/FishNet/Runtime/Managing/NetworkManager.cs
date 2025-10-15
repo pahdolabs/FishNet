@@ -339,16 +339,18 @@ namespace FishNet.Managing
             else if (serverStarted)
                 frameRate = ServerManager.FrameRate;
 
-            /* Make sure framerate isn't set to max on server.
-             * If it is then default to tick rate. If framerate is
-             * less than tickrate then also set to tickrate. */
-#if UNITY_SERVER
-            ushort minimumServerFramerate = (ushort)(TimeManager.TickRate + 1);
-            if (frameRate == MAXIMUM_FRAMERATE)
-                frameRate = minimumServerFramerate;
-            else if (frameRate < TimeManager.TickRate)
-                frameRate = minimumServerFramerate;
-#endif
+            if (serverStarted) {
+                ushort minimumServerFramerate = (ushort)(TimeManager.TickRate + 1);
+                // Make sure framerate isn't set to max on server unless it is also a client. If it is then default to tick rate.
+                if (!clientStarted && frameRate == MAXIMUM_FRAMERATE) {
+                    frameRate = minimumServerFramerate;
+                }
+                // If framerate is less than tickrate then set to tickrate + 1.
+                if (frameRate < TimeManager.TickRate) {
+                    frameRate = minimumServerFramerate;
+                }
+            }
+
             //If there is a framerate to set.
             if (frameRate > 0)
             {
