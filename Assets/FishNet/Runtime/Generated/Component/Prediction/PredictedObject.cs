@@ -304,7 +304,7 @@ namespace FishNet.Component.Prediction
         }
 
         public override void OnStartNetwork()
-        {           
+        {
             /* If host then initialize owner smoother.
              * Host will use owner smoothing settings for more
              * accurate results. */
@@ -357,7 +357,7 @@ namespace FishNet.Component.Prediction
         }
 
         public override void OnStopNetwork()
-        {          
+        {
             ChangeSubscriptions(false);
             UpdateRigidbodiesCount(false);
             base.TimeManager.OnPostTick -= TimeManager_OnPostTick;
@@ -402,12 +402,22 @@ namespace FishNet.Component.Prediction
 
         private void TimeManager_OnUpdate()
         {
+            if (this == null) {
+                // unity check if destroyed
+                ChangeSubscriptions(false);
+                return;
+            }
             _spectatorSmoother?.ManualUpdate();
             _ownerSmoother?.ManualUpdate();
         }
 
         private void TimeManager_OnPreTick()
         {
+            if (this == null) {
+                // unity check if destroyed
+                ChangeSubscriptions(false);
+                return;
+            }
             _localTick = base.TimeManager.LocalTick;
             _spectatorSmoother?.OnPreTick();
             _ownerSmoother?.OnPreTick();
@@ -415,6 +425,11 @@ namespace FishNet.Component.Prediction
 
         protected void TimeManager_OnPostTick()
         {
+            if (this == null) {
+                // unity check if destroyed
+                ChangeSubscriptions(false);
+                return;
+            }
             _spectatorSmoother?.OnPostTick();
             _ownerSmoother?.OnPostTick();
             Rigidbodies_TimeManager_OnPostTick();
