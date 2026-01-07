@@ -252,9 +252,11 @@ namespace FishNet.Object
             {
                 uint diff = TimeManager.LocalTick - GetLastReplicateTick();
                 offset += (int)diff - 1;
-                if (offset >= replicates.Count)
-                    return;
             }
+            
+            // we have an offset higher than our count of replicates, that would index out of bounds the list
+            if (offset >= replicates.Count)
+                return;
 
             _lastSentReplicateTick = TimeManager.LocalTick;
 
