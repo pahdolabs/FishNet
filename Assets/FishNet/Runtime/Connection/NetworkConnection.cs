@@ -72,6 +72,18 @@ namespace FishNet.Connection
         /// </summary>
         public bool Authenticated { get; private set; }
         /// <summary>
+        /// Called after this connection has loaded start scenes AND observers have been rebuilt.
+        /// This is the first moment TargetRpc and ObserversRpc are guaranteed to work.
+        /// Server only.
+        /// </summary>
+        public event Action<NetworkConnection> OnRpcReady;
+        
+        internal void InvokeRpcReady()
+        {
+            OnRpcReady?.Invoke(this);
+        }
+        
+        /// <summary>
         /// True if this connection IsValid and not Disconnecting.
         /// </summary>
         public bool IsActive => (ClientId >= 0 && !Disconnecting);

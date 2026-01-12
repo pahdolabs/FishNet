@@ -425,6 +425,10 @@ namespace FishNet.Managing.Server
             if (asServer)
             {
                 Objects.RebuildObservers(conn);
+                
+                // This is the FIRST moment TargetRpc is legal
+                conn.InvokeRpcReady();
+                
                 /* If connection is host then renderers must be hidden
                  * for all objects not visible to the host. The observer system
                  * does handle this but only after an initial state is set.
