@@ -254,9 +254,21 @@ namespace FishNet.Object
                 offset += (int)diff - 1;
             }
             
-            // we have an offset higher than our count of replicates, that would index out of bounds the list
-            if (offset >= replicates.Count)
+            int count = replicates.Count;
+            if (count == 0)
+            {
                 return;
+            }
+
+            // Clamp offset to the real buffer before it is indexed
+            if (offset < 0)
+            {
+                offset = 0;
+            }
+            else if (offset >= count)
+            {
+                offset = count - 1;
+            }
 
             _lastSentReplicateTick = TimeManager.LocalTick;
 
