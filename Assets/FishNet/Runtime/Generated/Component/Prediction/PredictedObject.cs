@@ -402,7 +402,7 @@ namespace FishNet.Component.Prediction
 
         private void TimeManager_OnUpdate()
         {
-            if (this == null) {
+            if (this == null || base.TimeManager == null) {
                 // unity check if destroyed
                 ChangeSubscriptions(false);
                 return;
@@ -413,7 +413,7 @@ namespace FishNet.Component.Prediction
 
         private void TimeManager_OnPreTick()
         {
-            if (this == null) {
+            if (this == null || base.TimeManager == null) {
                 // unity check if destroyed
                 ChangeSubscriptions(false);
                 return;
@@ -425,7 +425,7 @@ namespace FishNet.Component.Prediction
 
         protected void TimeManager_OnPostTick()
         {
-            if (this == null) {
+            if (this == null || base.TimeManager == null) {
                 // unity check if destroyed
                 ChangeSubscriptions(false);
                 return;
@@ -442,37 +442,57 @@ namespace FishNet.Component.Prediction
         /// <param name="subscribe"></param>
         private void ChangeSubscriptions(bool subscribe)
         {
-            if (base.TimeManager == null)
-                return;
             if (subscribe == _clientSubscribed)
                 return;
 
             if (subscribe)
             {
-                base.TimeManager.OnUpdate += TimeManager_OnUpdate;
-                base.TimeManager.OnPreTick += TimeManager_OnPreTick;
+                if (base.TimeManager != null)
+                {
+                    base.TimeManager.OnUpdate += TimeManager_OnUpdate;
+                    base.TimeManager.OnPreTick += TimeManager_OnPreTick;
+                }
+
                 //Only client will use these events.
                 if (!base.IsServer)
                 {
-                    base.PredictionManager.OnPreReplicateReplay += PredictionManager_OnPreReplicateReplay;
-                    base.PredictionManager.OnPostReplicateReplay += PredictionManager_OnPostReplicateReplay;
-                    base.PredictionManager.OnPreReconcile += PredictionManager_OnPreReconcile;
-                    base.PredictionManager.OnPostReconcile += PredictionManager_OnPostReconcile;
-                    base.TimeManager.OnRoundTripTimeUpdated += TimeManager_OnRoundTripTimeUpdated;
+                    if (base.PredictionManager != null)
+                    {
+                        base.PredictionManager.OnPreReplicateReplay += PredictionManager_OnPreReplicateReplay;
+                        base.PredictionManager.OnPostReplicateReplay += PredictionManager_OnPostReplicateReplay;
+                        base.PredictionManager.OnPreReconcile += PredictionManager_OnPreReconcile;
+                        base.PredictionManager.OnPostReconcile += PredictionManager_OnPostReconcile;
+                    }
+
+                    if (base.TimeManager != null)
+                    {
+                        base.TimeManager.OnRoundTripTimeUpdated += TimeManager_OnRoundTripTimeUpdated;
+                    }
                 }
             }
             else
             {
-                base.TimeManager.OnUpdate -= TimeManager_OnUpdate;
-                base.TimeManager.OnPreTick -= TimeManager_OnPreTick;
+                if (base.TimeManager != null)
+                {
+                    base.TimeManager.OnUpdate -= TimeManager_OnUpdate;
+                    base.TimeManager.OnPreTick -= TimeManager_OnPreTick;
+                }
+
                 //Only client will use these events.
                 if (!base.IsServer)
                 {
-                    base.PredictionManager.OnPreReplicateReplay -= PredictionManager_OnPreReplicateReplay;
-                    base.PredictionManager.OnPostReplicateReplay -= PredictionManager_OnPostReplicateReplay;
-                    base.PredictionManager.OnPreReconcile -= PredictionManager_OnPreReconcile;
-                    base.PredictionManager.OnPostReconcile -= PredictionManager_OnPostReconcile;
-                    base.TimeManager.OnRoundTripTimeUpdated -= TimeManager_OnRoundTripTimeUpdated;
+                    if (base.PredictionManager != null)
+                    {
+                        base.PredictionManager.OnPreReplicateReplay -= PredictionManager_OnPreReplicateReplay;
+                        base.PredictionManager.OnPostReplicateReplay -= PredictionManager_OnPostReplicateReplay;
+                        base.PredictionManager.OnPreReconcile -= PredictionManager_OnPreReconcile;
+                        base.PredictionManager.OnPostReconcile -= PredictionManager_OnPostReconcile;
+                    }
+
+                    if (base.TimeManager != null)
+                    {
+                        base.TimeManager.OnRoundTripTimeUpdated -= TimeManager_OnRoundTripTimeUpdated;
+                    }
                 }
 
                 //Also some resets
