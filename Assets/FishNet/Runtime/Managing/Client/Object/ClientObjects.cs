@@ -32,6 +32,11 @@ namespace FishNet.Managing.Client
         /// NetworkObjects which are currently active on the local client.
         /// </summary>
         internal List<NetworkObject> LocalClientSpawned = new List<NetworkObject>();
+        
+        /// <summary>
+        /// Called when the client processes a packet.
+        /// </summary>
+        public event Action<PacketProcessingArgs> OnPacketRead;
         #endregion
 
         #region Private.
@@ -328,6 +333,7 @@ namespace FishNet.Managing.Client
 
             if (nb != null)
             {
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)reader.PeekByte(), (PacketId)packetId, dataLength));
                 /* Length of data to be read for syncvars.
                  * This is important because syncvars are never
                  * a set length and data must be read through completion.
@@ -369,7 +375,10 @@ namespace FishNet.Managing.Client
             int dataLength = Packets.GetPacketLength((ushort)PacketId.Reconcile, reader, channel);
 
             if (nb != null)
+            {
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.Reconcile, dataLength));
                 nb.OnReconcileRpc(null, reader, channel);
+            }
             else
                 SkipDataLength((ushort)PacketId.ObserversRpc, reader, dataLength);
         }
@@ -385,7 +394,10 @@ namespace FishNet.Managing.Client
             int dataLength = Packets.GetPacketLength((ushort)PacketId.ObserversRpc, reader, channel);
 
             if (nb != null)
+            {
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.ObserversRpc, dataLength));
                 nb.OnObserversRpc(null, reader, channel);
+            }
             else
                 SkipDataLength((ushort)PacketId.ObserversRpc, reader, dataLength);
         }
@@ -400,7 +412,10 @@ namespace FishNet.Managing.Client
             int dataLength = Packets.GetPacketLength((ushort)PacketId.TargetRpc, reader, channel);
 
             if (nb != null)
+            {
+                OnPacketRead?.Invoke(new PacketProcessingArgs(nb, (int)nb.PeekRpcHash(reader), PacketId.TargetRpc, dataLength));
                 nb.OnTargetRpc(null, reader, channel);
+            }
             else
                 SkipDataLength((ushort)PacketId.TargetRpc, reader, dataLength);
         }
